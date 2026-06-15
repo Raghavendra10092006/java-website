@@ -1,0 +1,140 @@
+import java.util.*;
+
+class Donor {
+    String name;
+    String id;
+    int age;
+    String phone;
+    String city;
+    String bloodType;
+    boolean available;
+
+    public Donor(String name, String id, int age, String phone,
+                 String city, String bloodType, boolean available) {
+        this.name = name;
+        this.id = id;
+        this.age = age;
+        this.phone = phone;
+        this.city = city;
+        this.bloodType = bloodType;
+        this.available = available;
+    }
+
+    public String toString() {
+        return "Name: " + name +
+                ", ID: " + id +
+                ", Age: " + age +
+                ", Phone: " + phone +
+                ", City: " + city +
+                ", Blood Type: " + bloodType +
+                ", Available: " + (available ? "Yes" : "No");
+    }
+}
+
+public class Main {
+
+    static HashMap<String, ArrayList<Donor>> donorRegistry = new HashMap<>();
+
+    static void registerDonor(Scanner sc) {
+        System.out.print("Enter Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter Donor ID: ");
+        String id = sc.nextLine();
+
+        System.out.print("Enter Age: ");
+        int age = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Enter Phone Number: ");
+        String phone = sc.nextLine();
+
+        System.out.print("Enter City: ");
+        String city = sc.nextLine();
+
+        System.out.print("Enter Blood Type: ");
+        String bloodType = sc.nextLine();
+
+        System.out.print("Available (true/false): ");
+        boolean available = sc.nextBoolean();
+        sc.nextLine();
+
+        Donor donor = new Donor(name, id, age, phone, city, bloodType, available);
+
+        donorRegistry.putIfAbsent(bloodType, new ArrayList<>());
+        donorRegistry.get(bloodType).add(donor);
+
+        System.out.println("Donor Registered Successfully!");
+    }
+
+    static void searchDonor(Scanner sc) {
+        System.out.print("Enter Blood Type: ");
+        String bloodType = sc.nextLine();
+
+        System.out.print("Enter City: ");
+        String city = sc.nextLine();
+
+        ArrayList<Donor> donors = donorRegistry.get(bloodType);
+
+        if (donors == null || donors.isEmpty()) {
+            System.out.println("No donors found.");
+            return;
+        }
+
+        boolean found = false;
+
+        for (Donor donor : donors) {
+            if (donor.city.equalsIgnoreCase(city) && donor.available) {
+                System.out.println(donor);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No available donors found.");
+        }
+    }
+
+    static void displayAllDonors() {
+        for (String bloodType : donorRegistry.keySet()) {
+            System.out.println("\nBlood Type: " + bloodType);
+
+            for (Donor donor : donorRegistry.get(bloodType)) {
+                System.out.println(donor);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n===== HemoLink Blood Bank =====");
+            System.out.println("1. Register Donor");
+            System.out.println("2. Search Donor");
+            System.out.println("3. Display All Donors");
+            System.out.println("4. Exit");
+            System.out.print("Choose Option: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    registerDonor(sc);
+                    break;
+                case 2:
+                    searchDonor(sc);
+                    break;
+                case 3:
+                    displayAllDonors();
+                    break;
+                case 4:
+                    System.out.println("Thank You!");
+                    return;
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+        }
+    }
+}
